@@ -1,4 +1,3 @@
-use std::path::PathBuf;
 
 /// Abstrae un dotfile target
 pub struct Target {
