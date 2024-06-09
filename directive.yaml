@@ -1,0 +1,15 @@
+---
+targets:
+    - application: nvim
+      files:
+          - path: ".config/nvim"
+            type: directory
+          - path: ".config/nvim"
+            type: directory
+
+    - application: hypertop
+      files:
+          - path: "$HOME/.config/hypertop"
+            type: directory
+          - path: ".config/hypertop"
+            type: file

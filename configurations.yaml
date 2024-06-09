@@ -1,0 +1,2 @@
+# All configurations for CLI app
+base_path: ./base ## $HOME/dotfiles/base
