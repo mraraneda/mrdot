@@ -1,0 +1,32 @@
+---
+app_config:
+    ## $HOME/dotfiles/base
+    base_path: "base"
+
+
+dotfiles:
+    ## indicates what to do in case of collision
+    ##  if true -> remove elements
+    ##  if false -> skip (with logger warning)
+    remove_on_conflict: false
+
+    ## Set of applications with their "dotfiles" configurations
+    targets:
+        -   application: app_3
+            elements:
+                -   path: "playground/.config/app_3_simlink.txt"
+                -   path: "playground/.config/app_3"
+
+        -   application: app_4
+            elements:
+                -   path: "playground/.app_4"
+                -   path: "playground/algo-de-la-app_4.txt"
+
+        -   application: app_2
+            elements:
+                -   path: "playground/.config/app_2"
+
+        -   application: app_1
+            elements:
+                -   path: "playground/app_1.yaml"
+                -   path: "playground/app_1.toml"

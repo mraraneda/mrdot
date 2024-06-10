@@ -1,13 +1,18 @@
+use serde::Deserialize;
 
-/// Abstrae un dotfile target
-pub struct Target {
-    pub app_name: String,
-    pub path: String,
+#[derive(Deserialize, Debug)]
+pub struct Dotfiles {
+    pub remove_on_conflict: bool,
+    pub targets: Vec<Target>
 }
 
-/// Underlying type of target resource
-pub enum FsKind {
-    Dir,
-    File,
-    Symlink,
+#[derive(Deserialize, Debug)]
+pub struct Target {
+    pub application: String,
+    pub elements: Vec<Element>,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct Element {
+    pub path: String,
 }
