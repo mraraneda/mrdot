@@ -10,7 +10,7 @@ pub struct Configuration {
 
 #[derive(Deserialize, Debug)]
 pub struct AppConfig {
-    pub base_path: String
+
 }
 
 pub fn get_configuration() -> Result<Configuration, config::ConfigError> {

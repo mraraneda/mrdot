@@ -1,9 +1,10 @@
 #![allow(unused)]
 
+use clap::{Args, Parser, Subcommand};
 use env_logger::Env;
-use clap::{Parser, Subcommand, Args};
+
+use mrdot::configurations::get_configuration;
 use mrdot::engine::actions;
-use mrdot::configurations::{get_configuration};
 
 #[derive(Parser, Debug)]
 #[command(author, version)]
@@ -18,13 +19,13 @@ struct Cli {
 
 #[derive(Subcommand, Debug)]
 enum Commands {
-    Capture
+    Capture,
 }
 
 #[derive(Args)]
 struct Deploy {
     #[arg(short = 'd', long = "with-install")]
-    install: bool
+    install: bool,
 }
 
 fn main() {
@@ -34,7 +35,7 @@ fn main() {
 
     // TODO
     //  Cuales son las opciones?:
-    //  [] Capture
+    //  [✓] Capture
     //      Buscar los archivos originales y los traerá a la base dotfiles.
     //  [] Deploy
     //      Creará los symlinks a los elementos que tenga en la base, de acuerdo a la directiva.
@@ -44,10 +45,6 @@ fn main() {
     //
 
     match &cli.command {
-        Commands::Capture => {
-            actions::capture_iter(&config.dotfiles, &config.app_config).unwrap()
-        }
+        Commands::Capture => actions::capture_iter(&config.dotfiles).unwrap(),
     }
 }
-
-

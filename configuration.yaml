@@ -5,6 +5,8 @@ app_config:
 
 
 dotfiles:
+    base_path: "base"
+
     ## indicates what to do in case of collision
     ##  if true -> remove elements
     ##  if false -> skip (with logger warning)
@@ -29,4 +31,4 @@ dotfiles:
         -   application: app_1
             elements:
                 -   path: "playground/app_1.yaml"
-                -   path: "playground/app_1.toml"
+                -   path: "playground/app_2.toml"

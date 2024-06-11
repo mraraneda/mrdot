@@ -5,36 +5,29 @@ use std::io::ErrorKind;
 //use std::os::unix::fs::symlink;
 use std::path::PathBuf;
 
-use fs_extra::{dir, move_items_with_progress, TransitProcess};
+use fs_extra::{dir, move_items};
 
-use crate::configurations::AppConfig;
 use crate::engine::models::{Dotfiles, Target};
 
-pub fn capture_iter(dotfiles: &Dotfiles, config: &AppConfig) -> Result<(), Box<dyn Error>> {
-    log::debug!("CAPTURE_ITER");
+pub fn capture_iter(dotfiles: &Dotfiles) -> Result<(), Box<dyn Error>> {
     for target in dotfiles.targets.iter() {
-        capture(target, config)?;
+        capture(target, &dotfiles.base_path)?;
     }
 
     Ok(())
 }
 
-pub fn capture(target: &Target, config: &AppConfig) -> Result<(), Box<dyn Error>> {
-    // target tiene un conjunto de directorios y archivos
-
+pub fn capture(target: &Target, base_path: &String) -> Result<(), Box<dyn Error>> {
+    log::info!("Init for {}", target.application);
     // 1.   Move it -- I'm going to implement with strings, instead of "PathBuf" for simplicity
-    let destination = format!("{}/{}", config.base_path, target.application);
-    fs::create_dir(&destination).unwrap_or_else( |error| {
+    let destination_dir = format!("{}/{}", base_path, target.application);
+    fs::create_dir(&destination_dir).unwrap_or_else(|error| {
         if error.kind() == ErrorKind::AlreadyExists {
-            log::warn!("File already exist: \"{}\"", &destination)
+            log::info!("Ready directory: {}", &destination_dir)
         }
     });
-    
+
     let options = dir::CopyOptions::new();
-    let handle = |process_info: TransitProcess| {
-        log::info!("{}", process_info.total_bytes);
-        dir::TransitProcessResult::ContinueOrAbort
-    };
     let mut elements_to_move = Vec::new();
     for element in target.elements.iter() {
         // 1. Check symlink
@@ -42,7 +35,7 @@ pub fn capture(target: &Target, config: &AppConfig) -> Result<(), Box<dyn Error>
             Ok(metadata) => metadata,
             Err(e) => match e.kind() {
                 ErrorKind::NotFound => {
-                    log::error!("File not found: \"{}\"", &element.path);
+                    log::error!("File not found: {}", &element.path);
                     continue;
                 }
                 other_error => panic!("Problem with filesystem element: {:?}", other_error),
@@ -50,23 +43,26 @@ pub fn capture(target: &Target, config: &AppConfig) -> Result<(), Box<dyn Error>
         };
 
         if metadata.is_symlink() {
-            log::warn!("Symlink - skip captured: \"{}\"", &element.path);
+            log::warn!("Symlink detected, skip: {}", &element.path);
             continue;
         }
 
         // 2. Add to move list
         elements_to_move.push(&element.path);
     }
-    
-    move_items_with_progress(&elements_to_move, destination, &options, handle)?;
+
+    match move_items(&elements_to_move, destination_dir, &options) {
+        Ok(..) => log::info!("Ending {}", target.application),
+        Err(e) => log::error!("Move items error: {}", e),
+    };
 
     Ok(())
 }
 
-// pub fn deploy(target: &Target, config: &AppConfig) -> Result<(), Box<dyn Error>> {
+// pub fn deploy(target: &Target, remove_on_conflict: bool, base_path: &String) -> Result<(), Box<dyn Error>> {
 //     // 1.   get elements to binding
 //     let end_node = &target.path.rsplit_once('/').unwrap().1;
-//     let destination = format!("{}/{}", config.base_path, target.app_name);
+//     let destination = format!("{}/{}", config.algo, target.app_name);
 //
 //     // 2. Do symlinks
 //     let symlink_start = format!("{}/{}", destination, end_node);
