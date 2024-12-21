@@ -1,3 +1,5 @@
+.idea
 /target
 /playground
 /base
+*.DS_Store

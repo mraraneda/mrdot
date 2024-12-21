@@ -27,8 +27,9 @@ dotfiles:
         -   application: app_2
             elements:
                 -   path: "playground/.config/app_2"
+                -   path: "playground/app_2_file"
 
         -   application: app_1
             elements:
                 -   path: "playground/app_1.yaml"
-                -   path: "playground/app_2.toml"
+                -   path: "playground/app_1.toml"

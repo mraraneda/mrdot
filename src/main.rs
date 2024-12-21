@@ -10,7 +10,7 @@ use mrdot::engine::actions;
 #[command(author, version)]
 #[command(
     about = "mrdot is a CLI for dotfiles management",
-    long_about = "mrdot is a CLI that automates the installation of dotfiles and other setup tasks"
+    long_about = "mrdot is a CLI that automates the installation of dotfiles and other config files"
 )]
 struct Cli {
     #[command(subcommand)]
@@ -20,6 +20,7 @@ struct Cli {
 #[derive(Subcommand, Debug)]
 enum Commands {
     Capture,
+    Deploy,
 }
 
 #[derive(Args)]
@@ -34,17 +35,20 @@ fn main() {
     let cli = Cli::parse();
 
     // TODO
-    //  Cuales son las opciones?:
+    //  Supuesto: Vamos a tener que trabajar con rutas absolutas
+    //  Aun no resuelvo como traducir las variables en los filepaths :(
+    //  Cuáles son las opciones?:
     //  [✓] Capture
-    //      Buscar los archivos originales y los traerá a la base dotfiles.
-    //  [] Deploy
+    //      Buscar los archivos originales y los traerá a la base dotfiles
+    //  [✓] Deploy
     //      Creará los symlinks a los elementos que tenga en la base, de acuerdo a la directiva.
-    //  [] Resolución de conflictos: Qué hará la APP cuando encuentre un archivo en lugar de un symlink?
+    //  [] Resolución de conflictos: Qué hará la APP cuando encuentre un archivo en lugar de un symlink? (no entiendo esta duda)
     //  [] Install
     //      Instalará los packages indicados en la directiva, serán de 3 tipos: Hombrew cask, Homebrew formulae y github.
     //
 
     match &cli.command {
         Commands::Capture => actions::capture_iter(&config.dotfiles).unwrap(),
+        Commands::Deploy => actions::deploy_iter(&config.dotfiles).unwrap()
     }
 }
